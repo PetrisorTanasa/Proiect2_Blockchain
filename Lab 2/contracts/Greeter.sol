@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
@@ -9,22 +9,16 @@ contract Greeter {
     IUniswapV2Router01 tokenAddress;
     IUniswapV2Router01 router= IUniswapV2Router01(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
-    constructor(address _uniswap) public {
-    tokenAddress = router;
-    }
-    function tastSwapExactETHForTokens(
-        uint amountOut,
-        address token,
-        uint deadline
-    ) external payable {
-        address[] memory path = new address[](2);
-        path[0] = router.WETH();
-        path[1] = token;
-        router.swapExactETHForTokens(
-            amountOut,
+    constructor() public {}
+    function swapETHToUSDT() public payable {
+    address[] memory path = new address[](2);
+    path[0] = router.WETH();
+    path[1] = _usdt;
+
+    router.swapExactETHForTokens{value: msg.value}(
+            0,
             path,
             msg.sender,
-            deadline
+            block.timestamp + 100
         );
-    }
 }

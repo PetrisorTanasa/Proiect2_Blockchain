@@ -1,19 +1,23 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, waffle } = require("hardhat");
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
+describe("SWAP", function () {
+  it("Test swap", async function () {
+    const provider = waffle.provider;
+
     const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
+    const greeter = await Greeter.deploy();
     await greeter.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    const [owner, addr1, addr2] = await ethers.getSigners();
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+    const balance0 = await provider.getBalance(addr1.address);
+    console.log(balance0)
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+    const swapTx = await greeter.connect(addr1).swapETHToUSDT({value: 100000000000});
+    await swapTx.wait();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    const balance1 = await provider.getBalance(addr1.address);
+    console.log(balance1)
   });
 });
